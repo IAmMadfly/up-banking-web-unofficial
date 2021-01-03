@@ -15,6 +15,7 @@ import ArrowIcon from 'components/icons/ArrowIcon'
 import LoadingIcon from 'components/icons/LoadingIcon'
 import SaverBlock from 'components/savers/SaverBlock'
 import TransactionsList from 'components/transactions/TransactionsList'
+import TokenEntry from 'components/elements/TokenEntry'
 
 export default function Index() {
   // Number of pages in the app.
@@ -63,39 +64,25 @@ export default function Index() {
     </div>
 
   // The page where a user enters their token, it is not sent anywhere, just stored in React state.
-  const TokenEntry = () =>
-    <div className="flex flex-col h-full pt-0 md:pb-0 text-left">
-      <div className="mb-6 flex items-center">
-        <button onClick={() => prevPage()} className="text-primary flex items-center"><ArrowIcon className="mr-2 h-5 w-3 text-primary" /></button>
-        <div className="ml-auto inline-grid gap-2 grid-flow-col mb-4">
-          <img alt="Progress coin" src="/coin.png" className="w-4 h-4" />
-          <img alt="Progress coin" src="/coin.png" className="w-4 h-4" />
-          <div className="bg-altWhite w-4 h-4 rounded-full"></div>
-        </div>
-      </div>
 
-      <h1 className="leading-tight text-3xl mb-3">What's your<br />personal token?</h1>
-      <input onChange={(e) => setToken(e.target.value)} value={token} className="text-primary text-3xl bg-transparent placeholder-gray-700 focus:outline-none" placeholder="up:yeah:abcdef123" autoFocus />
-      <br />
-      <br />
+  function AnalysisApp() {
 
-      <div className="mt-auto">
-        <button disabled={token?.length === 0} className="disabled:bg-gray-700 disabled:cursor-not-allowed mb-2 sm:max-w-xxs w-full border border-transparent inline-flex flex items-center justify-center px-10 py-2 rounded bg-primary hover:bg-primary-light focus:outline-none focus:border-primary-dark focus:shadow-outline active:bg-primary-dark transition ease-in-out duration-150" onClick={() => nextPage()}>
-          <div className="text-center text-gray-900">Next</div>
-        </button>
-        <hr className="border-altWhite bg-altWhite my-4" />
-        <div className="grid gap-4 md:grid-flow-col">
-          <div>
-            <p className="text-sm text-primary"><a href="https://api.up.com.au/getting_started/" title="Get your Personal Access Token to play with!" target="_blank" rel="noreferrer">Don't have your personal token?</a></p>
-            <p className="mt-4 text-gray-600 text-sm max--xs">I <b>do not</b> store this token in any way. Everything is kept in React state and no network requests are made, other than those to the Up API.</p>
-          </div>
-          <div>
-            <p className="text-sm text-gray-500">Agreement</p>
-            <p className="mt-4 text-gray-600 text-sm max--xs">That being said, enter at your own risk. By entering, you agree that I don't take responsibility for any misuse of your token. If you're worried, reset it by creating a new one <a href="https://api.up.com.au/getting_started/" className="text-primary" title="Reset your Personal Access Token." target="_blank" rel="noreferrer">here.</a></p>
+    console.log("Accessing the Analysis Application")
+
+    return (
+      <div className="flex flex-col h-full pt-0 md:pb-0 text-left">
+        <div className="mb-6 flex items-center">
+          <button onClick={() => prevPage()} className="text-primary flex items-center"><ArrowIcon className="mr-2 h-5 w-3 text-primary" /></button>
+          <div className="ml-auto inline-grid gap-2 grid-flow-col mb-4">
+            <img alt="Progress coin" src="/coin.png" className="w-4 h-4" />
+            <img alt="Progress coin" src="/coin.png" className="w-4 h-4" />
+            <div className="bg-altWhite w-4 h-4 rounded-full"></div>
           </div>
         </div>
       </div>
-    </div>
+    )
+    
+  }
 
   /**
    * The main application container. This function houses a fairly simple/lazy/quick way to rotate through a few 
@@ -209,7 +196,7 @@ export default function Index() {
                 <h3 className="font-bold">Bonus Rate Activated</h3>
                 <div className=" text-xs text-gray-600">Learn more about our interest rates</div>
               </div>
-              <p className="ml-auto font-bold text-xl">1.60%</p>
+              <p className="ml-auto font-bold text-xl">1.10%</p>
             </div>
             <br />
 
@@ -286,8 +273,9 @@ export default function Index() {
           <a href="https://up.com.au/" title="Go to Up's website" className="hover:text-gray-700 duration-100" target="_blank" rel="noopener">Up</a>
           {page === 2 && !isError ?
             <>
-              <a title="Your activity" className="cursor-pointer text-white">Activity</a>
+              <a title="Your activity" className="cursor-pointer text-white" onClick={() => setPage(3)}>Activity</a>
               <a title="View payments" href="#" className="hover:text-gray-700 duration-100" >Payments</a>
+              <a title="Your payments analysis" href="#" onClick={() => setPage(3)}>Analysis</a>
               <Avatar className="text-white" />
               <button onClick={() => router.reload()} className="border border-transparent text-gray-900 font-semibold duration-100 md:flex hidden px-4 py-2 bg-primary hover:bg-primary-light focus:outline-none focus:border-primary-dark focus:shadow-outline active:bg-primary-dark transition ease-in-out duration-150 rounded">Log out</button>
             </>
@@ -305,8 +293,9 @@ export default function Index() {
             }}>
             <>
               {page === 0 && <Intro />}
-              {page === 1 && <TokenEntry />}
+              {page === 1 && <TokenEntry token={() => token} setToken={setToken} />}
               {page === 2 && <MainApp />}
+              {page === 3 && <AnalysisApp />}
             </>
           </CSSTransition>
         </SwitchTransition>
@@ -315,7 +304,9 @@ export default function Index() {
 
       <footer className="text-gray-600 py-6 md:mb-6 md:mt-6 mb-2 mt-0 border-t border-gray-800 flex md:flex-row flex-col md:text-left items-center text-sm">
         Unofficial Up Banking Website
-        <a href="https://peter-s.now.sh/" target="_blank" rel="noopener" className="md:ml-auto mr-6 md:mt-0 mt-3">Built by <span className="text-primary">Peter Skaltsis</span></a>
+        <a href="https://peter-s.now.sh/" target="_blank" rel="noopener" className="md:ml-auto mr-6 md:mt-0 mt-3">
+          Built by <span className="text-primary">Peter Skaltsis</span>, <a href="https://github.com/IAmMadfly" target="_blank"><span className="text-primary">Karl Runge</span></a>, <span className="text-primary">Connor Jarvis</span>
+        </a>
       </footer>
     </div >
   )
