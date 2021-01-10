@@ -29,6 +29,18 @@ export default function Index() {
   const nextPage = () => setPage(p => p + 1 === APP_PAGES ? p : p + 1)
   const prevPage = () => setPage(p => p >= 1 ? p - 1 : p)
 
+  async function checkTokenValid(tokenVal) {
+    console.log("Checking token:", tokenVal);
+    var data = null;
+    await queryWithToken(apiUrl + "/util/ping", tokenVal).then(res => {data = res; console.log("Executing lambda");});
+    console.log("Returned data:", data);
+    return data.meta?(data.meta.id?true:false):false
+  }
+
+  const handleKeyPress = (event) => {
+    console.log('enter press here! ')
+  }
+
   // The entry page to introduce users to the site/experiment.
   const Intro = () =>
     <div className="flex flex-col items-center justify-center text-center h-full">
@@ -80,7 +92,8 @@ export default function Index() {
       <br />
 
       <div className="mt-auto">
-        <button disabled={token?.length === 0} className="disabled:bg-gray-700 disabled:cursor-not-allowed mb-2 sm:max-w-xxs w-full border border-transparent inline-flex flex items-center justify-center px-10 py-2 rounded bg-primary hover:bg-primary-light focus:outline-none focus:border-primary-dark focus:shadow-outline active:bg-primary-dark transition ease-in-out duration-150" onClick={() => nextPage()}>
+        <button disabled={token?.length === 0} className="disabled:bg-gray-700 disabled:cursor-not-allowed mb-2 sm:max-w-xxs w-full border border-transparent inline-flex flex items-center justify-center px-10 py-2 rounded bg-primary hover:bg-primary-light focus:outline-none focus:border-primary-dark focus:shadow-outline active:bg-primary-dark transition ease-in-out duration-150" 
+          onClick={() => checkTokenValid(token).then(tokenValid=>tokenValid?nextPage():null)}>
           <div className="text-center text-gray-900">Next</div>
         </button>
         <hr className="border-altWhite bg-altWhite my-4" />
@@ -209,7 +222,7 @@ export default function Index() {
                 <h3 className="font-bold">Bonus Rate Activated</h3>
                 <div className=" text-xs text-gray-600">Learn more about our interest rates</div>
               </div>
-              <p className="ml-auto font-bold text-xl">1.60%</p>
+              <p className="ml-auto font-bold text-xl">1.10%</p>
             </div>
             <br />
 
@@ -227,6 +240,15 @@ export default function Index() {
           </div>
         </div>
       </>
+    )
+  }
+
+  function AnalyserApp() {
+    return (
+      <div>
+        
+        <h1>Analysis</h1>
+      </div>
     )
   }
 
@@ -287,7 +309,8 @@ export default function Index() {
           {page === 2 && !isError ?
             <>
               <a title="Your activity" className="cursor-pointer text-white">Activity</a>
-              <a title="View payments" href="#" className="hover:text-gray-700 duration-100" >Payments</a>
+              <a title="View payments" href="#" className="hover:text-gray-700 duration-100">Payments</a>
+              <a title="Transactions Analysis" href="#" onClick={setPage(3)} className="hover:text-gray-700 duration-100">Analysis</a>
               <Avatar className="text-white" />
               <button onClick={() => router.reload()} className="border border-transparent text-gray-900 font-semibold duration-100 md:flex hidden px-4 py-2 bg-primary hover:bg-primary-light focus:outline-none focus:border-primary-dark focus:shadow-outline active:bg-primary-dark transition ease-in-out duration-150 rounded">Log out</button>
             </>
@@ -297,7 +320,7 @@ export default function Index() {
         </nav>
       </header>
 
-      <main className="flex-1 md:mt-0 mt-6">
+      <main className="flex-1 md:mt-0 mt-6" tabIndex="1" onKeyPress={handleKeyPress}>
         <SwitchTransition mode={'out-in'}>
           <CSSTransition key={page} classNames="fade"
             addEndListener={(node, done) => {
@@ -307,6 +330,7 @@ export default function Index() {
               {page === 0 && <Intro />}
               {page === 1 && <TokenEntry />}
               {page === 2 && <MainApp />}
+              {page === 3 && <AnalyserApp /> }
             </>
           </CSSTransition>
         </SwitchTransition>
